@@ -2,7 +2,7 @@
 
 Welcome!
 
-This module, TeamCode, is where GearHeads will write/paste the code for Team 5197's
+TeamCode is the module where GearHeads will write/paste the code for Team 5197's
 Robot Controller app. The process for adding OpModes is straightforward.
 
 ## Creating your own OpModes
