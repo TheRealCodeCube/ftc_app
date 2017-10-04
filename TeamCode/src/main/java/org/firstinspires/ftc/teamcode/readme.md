@@ -3,8 +3,7 @@
 Welcome!
 
 TeamCode is the module where Team 5197 GearHeads will write/paste the code for
-your team's robot controller App. The process for adding OpModes is 
-straightforward. 
+their robot controller App. The process for adding OpModes is straightforward. 
 
 ## Creating your own OpModes
 
@@ -63,7 +62,8 @@ This is done inside Android Studio directly, using the following steps:
 
 Once your copy has been created, you should prepare it for use on your robot.
 This is done by adjusting the OpMode's name, and enabling it to be displayed 
-on the Driver Station's OpMode list.
+on the Driver Station's OpMode list. Enabling is done by removing or 
+commenting out the @Disabled annotation. Here's how to do that:
 
 Each OpMode sample class begins with several lines of code like the ones 
 shown below: 
@@ -76,10 +76,11 @@ shown below:
 The name that will appear on the driver station's "opmode list" is defined by
  the code: ``name="Template: Linear OpMode"`` You can change what appears 
  between the quotes to better describe your opmode. 
-The "group=" portion of the code can be used to help organize your list of OpModes.
-As shown, the current OpMode will NOT appear on the driver station's OpMode 
-list because of the ``@Disabled`` annotation which has been included. 
-This line can simply be deleted, or commented out, to make the OpMode visible.
+The "group=" portion of the code can be used to help organize your list of 
+OpModes. As shown, the current OpMode will NOT appear on the driver station's
+OpMode list because of the ``@Disabled`` annotation which has been included. 
+This line can simply be deleted, or commented out, to make the OpMode visible
+and enabled.
 
 
 ## ADVANCED Multi-Team App management:  Cloning the TeamCode Module
