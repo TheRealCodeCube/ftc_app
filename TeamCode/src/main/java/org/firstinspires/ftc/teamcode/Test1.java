@@ -35,7 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Demonstrates empty OpMode. Based on sample ConceptNullop.
+ * Demonstrates empty OpMode. Based on sample ConceptNullop. Created in a
+ * GearHead tutorial.
  */
 @Autonomous(name = "Test1", group = "Concept")
 //@Disabled
