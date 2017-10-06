@@ -47,6 +47,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
+import java.util.Timer;
 
 import static android.os.SystemClock.sleep;
 
@@ -204,8 +205,7 @@ public class Tablebot {
    ***************************************************************************/
     /*  Set up servos   */
   public void initServos() {
-    HiTEC485HB.setPosition(MIN_POS);
-    HiTEC485HB.setPosition(MAX_POS);
+    HiTEC485HB.setPosition((MIN_POS + MAX_POS)/2);
   }
 
   /***************************************************************************

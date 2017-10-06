@@ -48,7 +48,7 @@ import java.util.Locale;
   *   robot. All will be available for TeleOp control.
  */
 
-@TeleOp(name = "Tablebot All Systems", group = "Tablebot")
+@TeleOp(name = "Tablebot Run All", group = "Tablebot")
 //@Disabled
 public class TablebotRunAll extends LinearOpMode {
   public RRField field = new RRField(this);
