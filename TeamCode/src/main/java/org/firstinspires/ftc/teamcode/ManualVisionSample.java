@@ -29,6 +29,8 @@ package org.firstinspires.ftc.teamcode;
  +SOFTWARE.
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.ftc.resq.Beacon;
@@ -49,6 +51,8 @@ import org.opencv.core.Size;
  * ManualVisionOpMode, but you can still call the extensions' init(), loop(),
  * and frame() methods if you want to use them.
  */
+@TeleOp(name = "Manual Vision Sample", group = "OpenCV")
+//@Disabled
 public class ManualVisionSample extends ManualVisionOpMode {
 
     private static final ColorHSV lowerBoundRed = new ColorHSV((int)

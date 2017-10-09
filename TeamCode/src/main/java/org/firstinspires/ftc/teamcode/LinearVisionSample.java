@@ -29,6 +29,8 @@ package org.firstinspires.ftc.teamcode;
  +SOFTWARE.
  +
  */
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
@@ -49,6 +51,8 @@ import org.opencv.core.Size;
  * break the LinearVisionOpMode. Should this happen, open up an issue with
  * http://github.com/ftctechn. :)
  */
+@TeleOp(name = "Linear Vision Sample", group = "OpenCV")
+//@Disabled
 public class LinearVisionSample extends LinearVisionOpMode {
 
   //Frame counter

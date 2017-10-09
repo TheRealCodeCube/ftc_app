@@ -28,6 +28,8 @@ package org.firstinspires.ftc.teamcode;
  +
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.VisionOpMode;
@@ -46,6 +48,8 @@ import org.opencv.core.Size;
  * OpMode even extend the VisionOpMode class! Be sure to extend it if writing
  * your own OpMode structure.
  */
+@TeleOp(name = "Basic Vision Sample", group = "OpenCV")
+//@Disabled
 public class BasicVisionSample extends VisionOpMode {
 
   @Override
