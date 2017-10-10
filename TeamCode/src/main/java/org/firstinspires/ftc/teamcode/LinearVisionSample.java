@@ -29,6 +29,7 @@ package org.firstinspires.ftc.teamcode;
  +SOFTWARE.
  +
  */
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.lasarobotics.vision.android.Cameras;
@@ -83,7 +84,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
      */
     enableExtension(Extensions.BEACON);         //Beacon detection
     enableExtension(Extensions.ROTATION);       //Automatic screen rotation
-      // correction
+    // correction
     enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
     /**
@@ -109,7 +110,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
      * This will not work on some methods, such as COMPLEX
      **/
     //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2)
-      // , width - 200, 200));
+    // , width - 200, 200));
 
     /**
      * Set the rotation parameters of the screen
@@ -168,9 +169,9 @@ public class LinearVisionSample extends LinearVisionOpMode {
       telemetry.addData("Frame Counter", frameCount);
 
       //You can access the most recent frame data and modify it here using
-        // getFrameRgba() or getFrameGray().
+      // getFrameRgba() or getFrameGray().
       //Vision will run asynchronously (parallel) to any user code so your
-        // programs won't hang.
+      // programs won't hang.
       //You can use hasNewFrame() to test whether vision processed a new frame.
       //Once you copy the frame, discard it immediately with discardFrame().
       if (hasNewFrame()) {
