@@ -66,9 +66,6 @@ import org.opencv.core.Size;
 //@Disabled
 public class LinearVisionSampleThin extends LinearVisionOpMode {
 
-  //Frame counter
-  int frameCount = 0;
-
   @Override
   public void runOpMode() throws InterruptedException {
     //Wait for vision to initialize - this should be the first thing you do.
