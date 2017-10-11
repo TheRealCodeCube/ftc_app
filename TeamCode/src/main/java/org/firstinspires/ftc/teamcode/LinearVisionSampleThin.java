@@ -66,7 +66,10 @@ import org.opencv.core.Size;
 //@Disabled
 public class LinearVisionSampleThin extends LinearVisionOpMode {
 
-   @Override
+  //Frame counter
+  int frameCount = 0;
+
+  @Override
   public void runOpMode() throws InterruptedException {
     //Wait for vision to initialize - this should be the first thing you do.
     waitForVisionStart();
@@ -90,7 +93,6 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
      * If you turn on the BEACON extension, it's best to turn on ROTATION too.
      */
     enableExtension(Extensions.BEACON);         //Beacon detection
-    // Eventually, we want a JEWEL extension.
     //Extensions ROTATION and CAMERA_CONTROL not enabled.
 
     /**
