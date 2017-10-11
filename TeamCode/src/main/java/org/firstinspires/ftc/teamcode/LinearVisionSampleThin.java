@@ -87,7 +87,6 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
 
     /**
      * Enable extensions. Use what you need.
-     * If you turn on the BEACON extension, it's best to turn on ROTATION too.
      */
     enableExtension(Extensions.BEACON);         //Beacon detection
     //Extensions ROTATION and CAMERA_CONTROL not enabled. Eventually, we want
