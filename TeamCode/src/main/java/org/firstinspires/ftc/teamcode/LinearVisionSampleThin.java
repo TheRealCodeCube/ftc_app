@@ -144,7 +144,7 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
         //Discard the current frame to allow for the next one to render
         discardFrame();
       }
-      //Wait for one hardware cycle to allow other processes to run.
+      //Wait a full hardware cycle to allow other processes to run.
       waitOneFullHardwareCycle();
     }
   }
