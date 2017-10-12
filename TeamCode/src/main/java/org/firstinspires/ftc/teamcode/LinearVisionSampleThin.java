@@ -93,8 +93,10 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
     // a JEWEL extension.
 
     /**
-     * Set the beacon analysis method
-     * Try them all and see what works!
+     * Set the beacon analysis method. DEFAULT and REALTIME rejected; they
+     * are FASTer than FAST, and presumably less accurate. COMPLEX rejected
+     * because its declaration documentation says whole beacon must be
+     * visible. We won't always have both Jewels visible.
      */
     beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
@@ -106,51 +108,12 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
     beacon.setColorToleranceBlue(0);
 
     /**
-     * Set analysis boundary
-     * You should comment this to use the entire screen and uncomment only if
-     * you want faster analysis at the cost of not using the entire frame.
-     * This is also particularly useful if you know approximately where the
-     * beacon is
-     * as this will eliminate parts of the frame which may cause problems
+     * Set analysis boundary.
+     * Use this for faster analysis at the cost of not using the entire frame.
      * This will not work on some methods, such as COMPLEX
      **/
     //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2)
     // , width - 200, 200));
-
-    /**
-     * Set the rotation parameters of the screen
-     * If colors are being flipped or output appears consistently incorrect,
-     * try changing these.
-     *
-     * First, tell the extension whether you are using a secondary camera
-     * (or in some devices, a front-facing camera that reverses some colors).
-     *
-     * It's a good idea to disable global auto rotate in Android settings.
-     * You can do this
-     * by calling disableAutoRotate() or enableAutoRotate().
-     *
-     * It's also a good idea to force the phone into a specific orientation
-     * (or auto rotate) by
-     * calling either setActivityOrientationAutoRotate() or
-     * setActivityOrientationFixed(). If
-     * you don't, the camera reader may have problems reading the current
-     * orientation.
-     */
-    //rotation.setIsUsingSecondaryCamera(false);
-    //rotation.disableAutoRotate();
-    //rotation.setActivityOrientationFixed(ScreenOrientation.PORTRAIT);
-
-    /**
-     * Set camera control extension preferences
-     *
-     * Enabling manual settings will improve analysis rate and may lead to
-     * better results under
-     * tested conditions. If the environment changes, expect to change these
-     * values.
-     */
-    //cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature
-    //  .AUTO);
-    //cameraControl.setAutoExposureCompensation();
 
     //Wait for the match to begin
     waitForStart();
@@ -160,10 +123,10 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
     // as quickly as possible. This loop will exit once the opmode is closed.
     while (opModeIsActive()) {
       //Log a few things
-      telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-      telemetry.addData("Beacon Center", beacon.getAnalysis()
+      telemetry.addData("Jewel Colors", beacon.getAnalysis().getColorString());
+      telemetry.addData("Jewels Midpoint", beacon.getAnalysis()
         .getLocationString());
-      telemetry.addData("Beacon Confidence", beacon.getAnalysis()
+      telemetry.addData("Jewel Confidence", beacon.getAnalysis()
         .getConfidenceString());
 
 
