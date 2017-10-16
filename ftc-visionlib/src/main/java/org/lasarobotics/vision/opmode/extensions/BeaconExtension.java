@@ -49,8 +49,8 @@ public class BeaconExtension implements VisionExtension {
      * Set color tolerance for red beacon detector
      *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
-     *                  tolerance (more colors detect as red), -1 is minimum (fery vew colors detect
-     *                  as red)
+     *                  tolerance (more colors detect as red), -1 is minimum
+     *                  (very few colors detect as red)
      */
     public void setColorToleranceRed(double tolerance) {
         beacon.setColorToleranceRed(tolerance);
@@ -60,8 +60,8 @@ public class BeaconExtension implements VisionExtension {
      * Set color tolerance for blue beacon detector
      *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
-     *                  tolerance (more colors detect as blue), -1 is minimum (fery vew colors detect
-     *                  as blue)
+     *                  tolerance (more colors detect as blue), -1 is minimum
+     *                  (very few colors detect as blue)
      */
     public void setColorToleranceBlue(double tolerance) {
         beacon.setColorToleranceBlue(tolerance);
