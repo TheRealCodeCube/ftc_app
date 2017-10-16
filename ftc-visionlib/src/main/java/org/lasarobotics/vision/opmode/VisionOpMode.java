@@ -5,6 +5,7 @@
 package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
+import org.lasarobotics.vision.opmode.extensions.JewelExtension;
 import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
@@ -23,6 +24,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      * Add your extension here and in the Extensions class below!
      */
     public static final BeaconExtension beacon = new BeaconExtension();
+    public static final JewelExtension jewel = new JewelExtension();
     public static final ImageRotationExtension rotation = new ImageRotationExtension();
     public static final CameraControlExtension cameraControl = new CameraControlExtension();
 
@@ -118,6 +120,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      */
     public enum Extensions {
         BEACON(2, beacon),
+        JEWEL(3, jewel),
         CAMERA_CONTROL(1, cameraControl), //high priority
         ROTATION(4, rotation); //low priority
 

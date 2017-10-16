@@ -123,10 +123,10 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
     // as quickly as possible. This loop will exit once the opmode is closed.
     while (opModeIsActive()) {
       //Log a few things
-      telemetry.addData("Jewel Colors", beacon.getAnalysis().getColorString());
-      telemetry.addData("Jewels Midpoint", beacon.getAnalysis()
+      telemetry.addData("Beacon Colors", beacon.getAnalysis().getColorString());
+      telemetry.addData("Beacon Midpoint", beacon.getAnalysis()
         .getLocationString());
-      telemetry.addData("Jewel Confidence", beacon.getAnalysis()
+      telemetry.addData("Beacon Confidence", beacon.getAnalysis()
         .getConfidenceString());
 
 

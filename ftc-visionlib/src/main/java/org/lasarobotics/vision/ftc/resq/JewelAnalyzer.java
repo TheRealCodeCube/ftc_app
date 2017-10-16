@@ -28,11 +28,12 @@ import org.opencv.core.Size;
 import java.util.List;
 
 /**
- * Static beacon analysis methods
+ * Static jewel analysis methods
  */
-class BeaconAnalyzer {
+class JewelAnalyzer {
 
-    static Beacon.BeaconAnalysis analyze_REALTIME(List<Contour> contoursRed, List<Contour> contoursBlue,
+    static Jewel.JewelAnalysis analyze_REALTIME(List<Contour> contoursRed,
+                                             List<Contour> contoursBlue,
                                                   Mat img, ScreenOrientation orientation, boolean debug) {
         //DEBUG Draw contours before filtering
         if (debug) Drawing.drawContours(img, contoursRed, new ColorRGBA("#FF0000"), 2);
@@ -46,15 +47,15 @@ class BeaconAnalyzer {
 
         //If we don't have a main light for one of the colors, we know both colors are the same
         if (largestRed == null || largestBlue == null)
-            return new Beacon.BeaconAnalysis();
+            return new Jewel.JewelAnalysis();
 
-        //The height of the beacon on screen is the height of the best contour
+        //The height of the jewel on screen is the height of the best contour
         Contour largestHeight = ((largestRed.size().height) > (largestBlue.size().height)) ? largestRed : largestBlue;
-        double beaconHeight = largestHeight.size().height;
+        double jewelHeight = largestHeight.size().height;
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
-        //If it is, then we know that the left beacon is red and the other blue, and vice versa
+        //If it is, then we know that the left jewel is red and the other blue, and vice versa
         Point bestRedCenter = largestRed.centroid();
         Point bestBlueCenter = largestBlue.centroid();
 
@@ -80,7 +81,7 @@ class BeaconAnalyzer {
             } else if (bestBlueCenter.y < bestRedCenter.y) {
                 leftIsRed = false;
             } else {
-                return new Beacon.BeaconAnalysis();
+                return new Jewel.JewelAnalysis();
             }
         } else {
             if (bestRedCenter.x < bestBlueCenter.x) {
@@ -88,7 +89,7 @@ class BeaconAnalyzer {
             } else if (bestBlueCenter.x < bestRedCenter.x) {
                 leftIsRed = false;
             } else {
-                return new Beacon.BeaconAnalysis();
+                return new Jewel.JewelAnalysis();
             }
         }
 
@@ -129,8 +130,8 @@ class BeaconAnalyzer {
         Rectangle centerRect = new Rectangle(center, widthContours, heightContours);
 
         //Calculate confidence
-        double widthBeacon = rightMostContour.right() - leftMostContour.left();
-        double WH_ratio = widthBeacon / beaconHeight;
+        double widthJewel = rightMostContour.right() - leftMostContour.left();
+        double WH_ratio = widthJewel / jewelHeight;
         double ratioError = Math.abs((Constants.BEACON_WH_RATIO - WH_ratio)) / Constants.BEACON_WH_RATIO; // perfect value = 0;
         double averageHeight = (leftMostContour.height() + rightMostContour.height()) / 2.0;
         double dy = Math.abs((lCenter.y - rCenter.y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR);
@@ -140,12 +141,12 @@ class BeaconAnalyzer {
                 Constants.FAST_CONFIDENCE_NORM, 0.0);
 
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, centerRect, confidence);
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.RED, Jewel.JewelColor.BLUE, centerRect, confidence);
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, centerRect, confidence);
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.BLUE, Jewel.JewelColor.RED, centerRect, confidence);
     }
 
-    static Beacon.BeaconAnalysis analyze_FAST(ColorBlobDetector detectorRed, ColorBlobDetector detectorBlue,
+    static Jewel.JewelAnalysis analyze_FAST(ColorBlobDetector detectorRed, ColorBlobDetector detectorBlue,
                                               Mat img, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
         //Figure out which way to read the image
         double orientationAngle = orientation.getAngle();
@@ -195,10 +196,10 @@ class BeaconAnalyzer {
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
         if (largestRed == null && largestBlue == null)
-            return new Beacon.BeaconAnalysis();
+            return new Jewel.JewelAnalysis();
 
         //INFO The best contour from each color (if available) is selected as red and blue
-        //INFO The two best contours are then used to calculate the location of the beacon
+        //INFO The two best contours are then used to calculate the location of the jewel
 
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
@@ -206,26 +207,26 @@ class BeaconAnalyzer {
         //If the largest part of the non-null color is wider than a certain distance, then both are bright
         //Otherwise, only one may be lit
         //If only one is lit, and is wider than a certain distance, it is bright
-        //TODO We are currently assuming that the beacon cannot be in a "bright" state
+        //TODO We are currently assuming that the jewel cannot be in a "bright" state
         if (largestRed == null)
-            return new Beacon.BeaconAnalysis();
+            return new Jewel.JewelAnalysis();
         else if (largestBlue == null)
-            return new Beacon.BeaconAnalysis();
+            return new Jewel.JewelAnalysis();
 
-        //The height of the beacon on screen is the height of the best contour
+        //The height of the jewel on screen is the height of the best contour
         Contour largestHeight = ((largestRed.size().height) > (largestBlue.size().height)) ? largestRed : largestBlue;
-        double beaconHeight = largestHeight.size().height;
+        double jewelHeight = largestHeight.size().height;
 
-        //Get beacon width on screen by extrapolating from height
-        final double beaconActualHeight = Constants.BEACON_HEIGHT; //cm, only the lit up portion - 14.0 for entire
-        final double beaconActualWidth = Constants.BEACON_WIDTH; //cm
-        final double beaconWidthHeightRatio = Constants.BEACON_WH_RATIO;
-        double beaconWidth = beaconHeight * beaconWidthHeightRatio;
-        Size beaconSize = new Size(beaconWidth, beaconHeight);
+        //Get jewel width on screen by extrapolating from height
+        final double jewelActualHeight = Constants.BEACON_HEIGHT; //cm, only the lit up portion - 14.0 for entire
+        final double jewelActualWidth = Constants.BEACON_WIDTH; //cm
+        final double jewelWidthHeightRatio = Constants.BEACON_WH_RATIO;
+        double jewelWidth = jewelHeight * jewelWidthHeightRatio;
+        Size jewelSize = new Size(jewelWidth, jewelHeight);
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
-        //If it is, then we know that the left beacon is red and the other blue, and vice versa
+        //If it is, then we know that the left jewel is red and the other blue, and vice versa
 
         Point bestRedCenter = largestRed.centroid();
         Point bestBlueCenter = largestBlue.centroid();
@@ -238,7 +239,7 @@ class BeaconAnalyzer {
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
-        final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
+        final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * jewelSize.width); //percent of jewel width
 
         boolean leftIsRed;
         Contour leftMostContour, rightMostContour;
@@ -248,7 +249,7 @@ class BeaconAnalyzer {
             } else if (bestBlueCenter.y + minDistance < bestRedCenter.y) {
                 leftIsRed = false;
             } else {
-                return new Beacon.BeaconAnalysis();
+                return new Jewel.JewelAnalysis();
             }
         } else {
             if (bestRedCenter.x + minDistance < bestBlueCenter.x) {
@@ -256,7 +257,7 @@ class BeaconAnalyzer {
             } else if (bestBlueCenter.x + minDistance < bestRedCenter.x) {
                 leftIsRed = false;
             } else {
-                return new Beacon.BeaconAnalysis();
+                return new Jewel.JewelAnalysis();
             }
         }
 
@@ -278,7 +279,7 @@ class BeaconAnalyzer {
 
         //DEBUG Logging
         if (debug)
-            Log.d("Beacon", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +
+            Log.d("Jewel", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +
                     " Swap Direction: " + swapLeftRight);
 
         //Swap left and right if necessary
@@ -293,7 +294,7 @@ class BeaconAnalyzer {
 
         //Draw the box surrounding both contours
         //Get the width of the contours
-        double widthBeacon = rightMostContour.right() - leftMostContour.left();
+        double widthJewel = rightMostContour.right() - leftMostContour.left();
 
         //Center of contours is the average of centroids of the contours
         Point center = new Point((leftMostContour.centroid().x + rightMostContour.centroid().x) / 2,
@@ -304,23 +305,23 @@ class BeaconAnalyzer {
                 Math.min(leftMostContour.top(), rightMostContour.top());
 
         //The largest size ratio of tested over actual is the scale ratio
-        double scale = Math.max(widthBeacon / beaconActualWidth, heightContours / beaconActualHeight);
+        double scale = Math.max(widthJewel / jewelActualWidth, heightContours / jewelActualHeight);
 
-        //Define size of bounding box by scaling the actual beacon size
-        Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
+        //Define size of bounding box by scaling the actual jewel size
+        Size jewelSizeFinal = new Size(jewelActualWidth * scale, jewelActualHeight * scale);
 
         //Swap x and y if we rotated the view
         if (readOppositeAxis) {
             //noinspection SuspiciousNameCombination
-            beaconSizeFinal = new Size(beaconSizeFinal.height, beaconSizeFinal.width);
+            jewelSizeFinal = new Size(jewelSizeFinal.height, jewelSizeFinal.width);
         }
 
         //Get points of the bounding box
-        Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),
-                center.y - (beaconSizeFinal.height / 2));
-        Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
-                center.y + (beaconSizeFinal.height / 2));
-        Rectangle boundingBox = new Rectangle(new Rect(beaconTopLeft, beaconBottomRight));
+        Point jewelTopLeft = new Point(center.x - (jewelSizeFinal.width / 2),
+                center.y - (jewelSizeFinal.height / 2));
+        Point jewelBottomRight = new Point(center.x + (jewelSizeFinal.width / 2),
+                center.y + (jewelSizeFinal.height / 2));
+        Rectangle boundingBox = new Rectangle(new Rect(jewelTopLeft, jewelBottomRight));
 
         //Get ellipses in region of interest
         //Make sure the rectangles don't leave the image size
@@ -344,14 +345,14 @@ class BeaconAnalyzer {
         Detectable.offset(ellipsesRight, new Point(rightRect.left(), rightRect.top()));
 
         //Score ellipses
-        BeaconScoringCOMPLEX scorer = new BeaconScoringCOMPLEX(img.size());
-        List<BeaconScoringCOMPLEX.ScoredEllipse> scoredEllipsesLeft = scorer.scoreEllipses(ellipsesLeft, null, null, gray);
+        JewelScoringCOMPLEX scorer = new JewelScoringCOMPLEX(img.size());
+        List<JewelScoringCOMPLEX.ScoredEllipse> scoredEllipsesLeft = scorer.scoreEllipses(ellipsesLeft, null, null, gray);
         scoredEllipsesLeft = filterEllipses(scoredEllipsesLeft);
-        ellipsesLeft = BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipsesLeft);
+        ellipsesLeft = JewelScoringCOMPLEX.ScoredEllipse.getList(scoredEllipsesLeft);
         if (debug) Drawing.drawEllipses(img, ellipsesLeft, new ColorRGBA("#00ff00"), 3);
-        List<BeaconScoringCOMPLEX.ScoredEllipse> scoredEllipsesRight = scorer.scoreEllipses(ellipsesRight, null, null, gray);
+        List<JewelScoringCOMPLEX.ScoredEllipse> scoredEllipsesRight = scorer.scoreEllipses(ellipsesRight, null, null, gray);
         scoredEllipsesRight = filterEllipses(scoredEllipsesRight);
-        ellipsesRight = BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipsesRight);
+        ellipsesRight = JewelScoringCOMPLEX.ScoredEllipse.getList(scoredEllipsesRight);
         if (debug) Drawing.drawEllipses(img, ellipsesRight, new ColorRGBA("#00ff00"), 3);
 
         //Calculate ellipse center if present
@@ -377,9 +378,9 @@ class BeaconAnalyzer {
             //Make very, very sure that we didn't just find the same ellipse
             if (centerLeft != null && centerRight != null) {
                 if (Math.abs(centerLeft.x - centerRight.x) <
-                        Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width) {
-                    //Are both ellipses on the left or right side of the beacon? - remove the opposite side's ellipse
-                    if (Math.abs(centerLeft.x - leftRect.center().x) < Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width)
+                        Constants.ELLIPSE_MIN_DISTANCE * jewelSize.width) {
+                    //Are both ellipses on the left or right side of the jewel? - remove the opposite side's ellipse
+                    if (Math.abs(centerLeft.x - leftRect.center().x) < Constants.ELLIPSE_MIN_DISTANCE * jewelSize.width)
                         scoredEllipsesRight.remove(0);
                     else
                         scoredEllipsesLeft.remove(0);
@@ -390,7 +391,7 @@ class BeaconAnalyzer {
 
         } while (!done);
 
-        //Improve the beacon center if both ellipses present
+        //Improve the jewel center if both ellipses present
         byte ellipseExtrapolated = 0;
         if (centerLeft != null && centerRight != null) {
             if (readOppositeAxis)
@@ -437,20 +438,20 @@ class BeaconAnalyzer {
                     !readOppositeAxis ? centerRight : new Point(centerRight.y, centerRight.x), c, 8, 3);
         }
 
-        //Draw the rectangle containing the beacon
+        //Draw the rectangle containing the jewel
         if (debug) Drawing.drawRectangle(img, boundingBox, new ColorRGBA(0, 255, 0), 4);
 
-        //Tell us the height of the beacon
-        //TODO later we can get the distance away from the beacon based on its height and position
+        //Tell us the height of the jewel
+        //TODO later we can get the distance away from the jewel based on its height and position
 
         //Remove the largest index and look for the next largest
         //If the next largest is (mostly) within the area of the box, then merge it in with the largest
         //Check if the size of the largest contour(s) is about twice the size of the other
         //This would indicate one is brightly lit and the other is not
-        //If this is not true, then neither part of the beacon is highly lit
+        //If this is not true, then neither part of the jewel is highly lit
 
         //Get confidence approximation
-        double WH_ratio = widthBeacon / beaconHeight;
+        double WH_ratio = widthJewel / jewelHeight;
         double ratioError = Math.abs((Constants.BEACON_WH_RATIO - WH_ratio)) / Constants.BEACON_WH_RATIO; // perfect value = 0;
         double averageHeight = (leftMostContour.height() + rightMostContour.height()) / 2.0;
         double dy = Math.abs((leftMostContour.centroid().y - rightMostContour.centroid().y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR);
@@ -498,14 +499,14 @@ class BeaconAnalyzer {
             boundingBox = boundingBox.transpose();
 
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.RED, Jewel.JewelColor.BLUE, boundingBox, confidence
                     , leftEllipse, rightEllipse);
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.BLUE, Jewel.JewelColor.RED, boundingBox, confidence
                     , leftEllipse, rightEllipse);
     }
 
-    private static List<BeaconScoringCOMPLEX.ScoredEllipse> filterEllipses(List<BeaconScoringCOMPLEX.ScoredEllipse> ellipses) {
+    private static List<JewelScoringCOMPLEX.ScoredEllipse> filterEllipses(List<JewelScoringCOMPLEX.ScoredEllipse> ellipses) {
         for (int i = ellipses.size() - 1; i >= 0; i--)
             if (ellipses.get(i).score < Constants.ELLIPSE_SCORE_REQ)
                 ellipses.remove(i);
@@ -542,7 +543,7 @@ class BeaconAnalyzer {
         return largestIndex;
     }
 
-    static Beacon.BeaconAnalysis analyze_COMPLEX(List<Contour> contoursRed, List<Contour> contoursBlue,
+    static Jewel.JewelAnalysis analyze_COMPLEX(List<Contour> contoursRed, List<Contour> contoursBlue,
                                                  Mat img, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
@@ -558,7 +559,7 @@ class BeaconAnalyzer {
         //Finally, a fraction of the ellipse value is added to the value of the contour
         //The best ellipse is found first, then only this ellipse adds to the value
         //The best contour from each color (if available) is selected as red and blue
-        //The two best contours are then used to calculate the location of the beacon
+        //The two best contours are then used to calculate the location of the jewel
 
         //TODO Filter out bad contours - filtering currently ignored
 
@@ -567,15 +568,15 @@ class BeaconAnalyzer {
         if (debug) Drawing.drawContours(img, contoursBlue, new ColorRGBA("#BBDEFB"), 2);
 
         //Score contours
-        BeaconScoringCOMPLEX scorer = new BeaconScoringCOMPLEX(img.size());
-        List<BeaconScoringCOMPLEX.ScoredContour> scoredContoursRed = scorer.scoreContours(contoursRed, null, null, img, gray);
-        List<BeaconScoringCOMPLEX.ScoredContour> scoredContoursBlue = scorer.scoreContours(contoursBlue, null, null, img, gray);
+        JewelScoringCOMPLEX scorer = new JewelScoringCOMPLEX(img.size());
+        List<JewelScoringCOMPLEX.ScoredContour> scoredContoursRed = scorer.scoreContours(contoursRed, null, null, img, gray);
+        List<JewelScoringCOMPLEX.ScoredContour> scoredContoursBlue = scorer.scoreContours(contoursBlue, null, null, img, gray);
 
         //DEBUG Draw red and blue contours after filtering
         if (debug)
-            Drawing.drawContours(img, BeaconScoringCOMPLEX.ScoredContour.getList(scoredContoursRed), new ColorRGBA(255, 0, 0), 2);
+            Drawing.drawContours(img, JewelScoringCOMPLEX.ScoredContour.getList(scoredContoursRed), new ColorRGBA(255, 0, 0), 2);
         if (debug)
-            Drawing.drawContours(img, BeaconScoringCOMPLEX.ScoredContour.getList(scoredContoursBlue), new ColorRGBA(0, 0, 255), 2);
+            Drawing.drawContours(img, JewelScoringCOMPLEX.ScoredContour.getList(scoredContoursBlue), new ColorRGBA(0, 0, 255), 2);
 
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
@@ -589,28 +590,28 @@ class BeaconAnalyzer {
         //Drawing.drawEllipses(img, ellipses, new ColorRGBA("#ff0745"), 1);
 
         //Score ellipses
-        List<BeaconScoringCOMPLEX.ScoredEllipse> scoredEllipses = scorer.scoreEllipses(ellipses, null, null, gray);
+        List<JewelScoringCOMPLEX.ScoredEllipse> scoredEllipses = scorer.scoreEllipses(ellipses, null, null, gray);
 
         //DEBUG Ellipse data after filtering
         if (debug)
-            Drawing.drawEllipses(img, BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses), new ColorRGBA("#FFC107"), 2);
+            Drawing.drawEllipses(img, JewelScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses), new ColorRGBA("#FFC107"), 2);
 
         //DEBUG draw top 5 ellipses
         if (scoredEllipses.size() > 0 && debug) {
-            Drawing.drawEllipses(img, BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 5 ? 5 : scoredEllipses.size()))
+            Drawing.drawEllipses(img, JewelScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 5 ? 5 : scoredEllipses.size()))
                     , new ColorRGBA("#d0ff00"), 3);
-            Drawing.drawEllipses(img, BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 3 ? 3 : scoredEllipses.size()))
+            Drawing.drawEllipses(img, JewelScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 3 ? 3 : scoredEllipses.size()))
                     , new ColorRGBA("#00ff00"), 3);
         }
 
         //Third, comparative analysis is used on each ellipse and contour to create a score for the contours
-        BeaconScoringCOMPLEX.MultiAssociatedContours associations = scorer.scoreAssociations(scoredContoursRed, scoredContoursBlue, scoredEllipses);
+        JewelScoringCOMPLEX.MultiAssociatedContours associations = scorer.scoreAssociations(scoredContoursRed, scoredContoursBlue, scoredEllipses);
         double score = (associations.blueContours.size() > 0 ? associations.blueContours.get(0).score : 0) +
                 (associations.redContours.size() > 0 ? associations.redContours.get(0).score : 0);
         double confidence = score / Constants.CONFIDENCE_DIVISOR;
 
         //INFO The best contour from each color (if available) is selected as red and blue
-        //INFO The two best contours are then used to calculate the location of the beacon
+        //INFO The two best contours are then used to calculate the location of the jewel
 
         //Get the best contour in each (starting with the largest) if any contours exist
         //We're calling this one the main light
@@ -622,35 +623,35 @@ class BeaconAnalyzer {
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
         if (bestRed == null && bestBlue == null)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.UNKNOWN, Beacon.BeaconColor.UNKNOWN, new Rectangle(), 0.0f);
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.UNKNOWN, Jewel.JewelColor.UNKNOWN, new Rectangle(), 0.0f);
 
         //TODO rotate image based on camera rotation here
 
-        //The height of the beacon on screen is the height of the best contour
+        //The height of the jewel on screen is the height of the best contour
         Contour largestHeight = ((bestRed != null ? bestRed.size().height : 0) >
                 (bestBlue != null ? bestBlue.size().height : 0)) ? bestRed : bestBlue;
         assert largestHeight != null;
-        double beaconHeight = largestHeight.size().height;
+        double jewelHeight = largestHeight.size().height;
 
-        //Get beacon width on screen by extrapolating from height
-        final double beaconActualHeight = Constants.BEACON_HEIGHT; //cm, only the lit up portion - 14.0 for entire
-        final double beaconActualWidth = Constants.BEACON_WIDTH; //cm
-        final double beaconWidthHeightRatio = Constants.BEACON_WH_RATIO;
-        double beaconWidth = beaconHeight * beaconWidthHeightRatio;
-        Size beaconSize = new Size(beaconWidth, beaconHeight);
+        //Get jewel width on screen by extrapolating from height
+        final double jewelActualHeight = Constants.BEACON_HEIGHT; //cm, only the lit up portion - 14.0 for entire
+        final double jewelActualWidth = Constants.BEACON_WIDTH; //cm
+        final double jewelWidthHeightRatio = Constants.BEACON_WH_RATIO;
+        double jewelWidth = jewelHeight * jewelWidthHeightRatio;
+        Size jewelSize = new Size(jewelWidth, jewelHeight);
 
         //If the largest part of the non-null color is wider than a certain distance, then both are bright
         //Otherwise, only one may be lit
         //If only one is lit, and is wider than a certain distance, it is bright
-        //TODO We are currently assuming that the beacon cannot be in a "bright" state
+        //TODO We are currently assuming that the jewel cannot be in a "bright" state
         if (bestRed == null)
-            return new Beacon.BeaconAnalysis();
+            return new Jewel.JewelAnalysis();
         else if (bestBlue == null)
-            return new Beacon.BeaconAnalysis();
+            return new Jewel.JewelAnalysis();
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
-        //If it is, then we know that the left beacon is red and the other blue, and vice versa
+        //If it is, then we know that the left jewel is red and the other blue, and vice versa
 
         Point bestRedCenter = bestRed.centroid();
         Point bestBlueCenter = bestBlue.centroid();
@@ -661,7 +662,7 @@ class BeaconAnalyzer {
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
-        final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
+        final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * jewelSize.width); //percent of jewel width
         //Figure out which way to read the image
         double orientationAngle = orientation.getAngle();
         boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
@@ -677,7 +678,7 @@ class BeaconAnalyzer {
             } else if (bestBlueCenter.y + minDistance < bestRedCenter.y) {
                 leftIsRed = false;
             } else {
-                return new Beacon.BeaconAnalysis();
+                return new Jewel.JewelAnalysis();
             }
         } else {
             if (bestRedCenter.x + minDistance < bestBlueCenter.x) {
@@ -685,7 +686,7 @@ class BeaconAnalyzer {
             } else if (bestBlueCenter.x + minDistance < bestRedCenter.x) {
                 leftIsRed = false;
             } else {
-                return new Beacon.BeaconAnalysis();
+                return new Jewel.JewelAnalysis();
             }
         }
 
@@ -723,7 +724,7 @@ class BeaconAnalyzer {
 
         //Draw the box surrounding both contours
         //Get the width of the contours
-        double widthBeacon = rightMostContour.right() - leftMostContour.left();
+        double widthJewel = rightMostContour.right() - leftMostContour.left();
 
         //Center of contours is the average of centers of the contours
         Point center = new Point((leftMostContour.centroid().x + rightMostContour.centroid().x) / 2,
@@ -734,29 +735,29 @@ class BeaconAnalyzer {
                 Math.min(leftMostContour.top(), rightMostContour.top());
 
         //The largest size ratio of tested over actual is the scale ratio
-        double scale = Math.max(widthBeacon / beaconActualWidth, heightContours / beaconActualHeight);
+        double scale = Math.max(widthJewel / jewelActualWidth, heightContours / jewelActualHeight);
 
-        //Define size of bounding box by scaling the actual beacon size
-        Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
+        //Define size of bounding box by scaling the actual jewel size
+        Size jewelSizeFinal = new Size(jewelActualWidth * scale, jewelActualHeight * scale);
 
         //Swap x and y if we rotated the view
         if (readOppositeAxis) {
             //noinspection SuspiciousNameCombination
-            beaconSizeFinal = new Size(beaconSizeFinal.height, beaconSizeFinal.width);
+            jewelSizeFinal = new Size(jewelSizeFinal.height, jewelSizeFinal.width);
         }
 
         //Get points of the bounding box
-        Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),
-                center.y - (beaconSizeFinal.height / 2));
-        Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
-                center.y + (beaconSizeFinal.height / 2));
-        Rectangle boundingBox = new Rectangle(new Rect(beaconTopLeft, beaconBottomRight));
+        Point jewelTopLeft = new Point(center.x - (jewelSizeFinal.width / 2),
+                center.y - (jewelSizeFinal.height / 2));
+        Point jewelBottomRight = new Point(center.x + (jewelSizeFinal.width / 2),
+                center.y + (jewelSizeFinal.height / 2));
+        Rectangle boundingBox = new Rectangle(new Rect(jewelTopLeft, jewelBottomRight));
 
-        //Draw the rectangle containing the beacon
+        //Draw the rectangle containing the jewel
         if (debug) Drawing.drawRectangle(img, boundingBox, new ColorRGBA(0, 255, 0), 4);
 
-        //Tell us the height of the beacon
-        //TODO later we can get the distance away from the beacon based on its height and position
+        //Tell us the height of the jewel
+        //TODO later we can get the distance away from the jewel based on its height and position
 
         //Remove the largest index and look for the next largest
         //If the next largest is (mostly) within the area of the box, then merge it in with the largest
@@ -802,9 +803,9 @@ class BeaconAnalyzer {
         //Make very, very sure that we didn't just find the same ellipse
         if (leftEllipse != null && rightEllipse != null) {
             if (Math.abs(leftEllipse.center().x - rightEllipse.center().x) <
-                    Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width) {
-                //Are both ellipses on the left or right side of the beacon? - remove the opposite side's ellipse
-                if (Math.abs(leftEllipse.center().x - leftMostContour.center().x) < Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width)
+                    Constants.ELLIPSE_MIN_DISTANCE * jewelSize.width) {
+                //Are both ellipses on the left or right side of the jewel? - remove the opposite side's ellipse
+                if (Math.abs(leftEllipse.center().x - leftMostContour.center().x) < Constants.ELLIPSE_MIN_DISTANCE * jewelSize.width)
                     rightEllipse = null;
                 else
                     leftEllipse = null;
@@ -815,10 +816,10 @@ class BeaconAnalyzer {
         if (readOppositeAxis)
             boundingBox = boundingBox.transpose();
 
-        //If this is not true, then neither part of the beacon is highly lit
+        //If this is not true, then neither part of the jewel is highly lit
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse);
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.RED, Jewel.JewelColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse);
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence, leftEllipse, rightEllipse);
+            return new Jewel.JewelAnalysis(Jewel.JewelColor.BLUE, Jewel.JewelColor.RED, boundingBox, confidence, leftEllipse, rightEllipse);
     }
 }

@@ -5,7 +5,7 @@
 package org.lasarobotics.vision.opmode.extensions;
 
 import org.lasarobotics.vision.detection.objects.Rectangle;
-import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Jewel;
 import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
@@ -13,17 +13,17 @@ import org.opencv.core.Mat;
 /**
  * Extension that supports finding and reading beacon color data
  */
-public class BeaconExtension implements VisionExtension {
-    private Beacon beacon;
+public class JewelExtension implements VisionExtension {
+    private Jewel jewel;
 
-    private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
+    private Jewel.JewelAnalysis analysis = new Jewel.JewelAnalysis();
 
     /**
-     * Get latest beacon analysis
+     * Get latest jewel analysis
      *
-     * @return A Beacon.BeaconAnalysis struct
+     * @return A Jewel.JewelAnalysis struct
      */
-    public Beacon.BeaconAnalysis getAnalysis() {
+    public Jewel.JewelAnalysis getAnalysis() {
         return analysis;
     }
 
@@ -32,8 +32,8 @@ public class BeaconExtension implements VisionExtension {
      *
      * @return Analysis method
      */
-    public Beacon.AnalysisMethod getAnalysisMethod() {
-        return beacon.getAnalysisMethod();
+    public Jewel.AnalysisMethod getAnalysisMethod() {
+        return jewel.getAnalysisMethod();
     }
 
     /**
@@ -41,8 +41,8 @@ public class BeaconExtension implements VisionExtension {
      *
      * @param method Analysis method to use
      */
-    public void setAnalysisMethod(Beacon.AnalysisMethod method) {
-        beacon.setAnalysisMethod(method);
+    public void setAnalysisMethod(Jewel.AnalysisMethod method) {
+        jewel.setAnalysisMethod(method);
     }
 
     /**
@@ -53,18 +53,18 @@ public class BeaconExtension implements VisionExtension {
      *                  (very few colors detect as red)
      */
     public void setColorToleranceRed(double tolerance) {
-        beacon.setColorToleranceRed(tolerance);
+        jewel.setColorToleranceRed(tolerance);
     }
 
     /**
-     * Set color tolerance for blue beacon detector
+     * Set color tolerance for blue jewel detector
      *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
      *                  tolerance (more colors detect as blue), -1 is minimum
      *                  (very few colors detect as blue)
      */
     public void setColorToleranceBlue(double tolerance) {
-        beacon.setColorToleranceBlue(tolerance);
+        jewel.setColorToleranceBlue(tolerance);
     }
 
     /**
@@ -74,27 +74,27 @@ public class BeaconExtension implements VisionExtension {
      * @param bounds A rectangle containing the boundary
      */
     public void setAnalysisBounds(Rectangle bounds) {
-        beacon.setAnalysisBounds(bounds);
+        jewel.setAnalysisBounds(bounds);
     }
 
     /**
      * Enable debug drawing. Use this on testing apps only, not the robot controller.
      */
     public void enableDebug() {
-        beacon.enableDebug();
+        jewel.enableDebug();
     }
 
     /**
      * Disable debug drawing (default). Use this on the robot controller.
      */
     public void disableDebug() {
-        beacon.disableDebug();
+        jewel.disableDebug();
     }
 
     @Override
     public void init(VisionOpMode opmode) {
         //Initialize all detectors here
-        beacon = new Beacon();
+        jewel = new Jewel();
     }
 
     @Override
@@ -110,7 +110,7 @@ public class BeaconExtension implements VisionExtension {
                     VisionOpMode.rotation.getRotationCompensationAngle());
 
             //Get color analysis
-            this.analysis = beacon.analyzeFrame(rgba, gray, orientation);
+            this.analysis = jewel.analyzeFrame(rgba, gray, orientation);
 
         } catch (Exception e) {
             e.printStackTrace();

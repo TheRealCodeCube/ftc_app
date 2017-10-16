@@ -20,9 +20,9 @@ import org.opencv.core.Size;
 import java.text.DecimalFormat;
 
 /**
- * Beacon location and analysis
+ * Jewel location and analysis
  */
-public final class Beacon {
+public final class Jewel {
 
     private AnalysisMethod method;
     private Rectangle bounds;
@@ -31,27 +31,27 @@ public final class Beacon {
     private boolean debug = false;
 
     /**
-     * Instantiate a beacon that uses the default method
+     * Instantiate a jewel that uses the default method
      */
-    public Beacon() {
+    public Jewel() {
         method = AnalysisMethod.DEFAULT;
     }
 
     /**
-     * Instantiate a beacon that uses a specific analysis method
+     * Instantiate a jewel that uses a specific analysis method
      *
      * @param method Analysis method
      */
-    public Beacon(AnalysisMethod method) {
+    public Jewel(AnalysisMethod method) {
         this.method = method;
     }
 
     /**
-     * Instantiate a beacon that uses a specific analysis method
+     * Instantiate a jewel that uses a specific analysis method
      *
      * @param method Analysis method
      */
-    public Beacon(AnalysisMethod method, Rectangle bounds) {
+    public Jewel(AnalysisMethod method, Rectangle bounds) {
         this.method = method;
         this.bounds = bounds;
     }
@@ -71,9 +71,9 @@ public final class Beacon {
      *
      * @param img  Image to analyze
      * @param gray Grayscale image to analyze
-     * @return Beacon analysis class
+     * @return Jewel analysis class
      */
-    public BeaconAnalysis analyzeFrame(Mat img, Mat gray) {
+    public JewelAnalysis analyzeFrame(Mat img, Mat gray) {
         return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.LANDSCAPE);
     }
 
@@ -83,9 +83,9 @@ public final class Beacon {
      * @param img         Image to analyze
      * @param gray        Grayscale image to analyze
      * @param orientation Screen orientation compensation, given by the android.Sensors class
-     * @return Beacon analysis class
+     * @return Jewel analysis class
      */
-    public BeaconAnalysis analyzeFrame(Mat img, Mat gray, ScreenOrientation orientation) {
+    public JewelAnalysis analyzeFrame(Mat img, Mat gray, ScreenOrientation orientation) {
         return analyzeFrame(this.redDetector, this.blueDetector, img, gray, orientation);
     }
 
@@ -97,24 +97,28 @@ public final class Beacon {
      * @param img          Image to analyze
      * @param gray         Grayscale image to analyze
      * @param orientation  Screen orientation compensation, given by the android.Sensors class
-     * @return Beacon analysis class
+     * @return Jewel analysis class
      */
-    public BeaconAnalysis analyzeFrame(ColorBlobDetector redDetector, ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
+    public JewelAnalysis analyzeFrame(ColorBlobDetector redDetector,
+                                  ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
         if (this.bounds == null)
             this.bounds = new Rectangle(img.size());
         switch (method) {
             case REALTIME:
                 blueDetector.process(img);
                 redDetector.process(img);
-                return BeaconAnalyzer.analyze_REALTIME(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.debug);
+                return JewelAnalyzer.analyze_REALTIME(redDetector.getContours
+                  (), blueDetector.getContours(), img, orientation, this.debug);
             case FAST:
             case DEFAULT:
             default:
-                return BeaconAnalyzer.analyze_FAST(redDetector, blueDetector, img, gray, orientation, this.bounds, this.debug);
+                return JewelAnalyzer.analyze_FAST(redDetector, blueDetector,
+                  img, gray, orientation, this.bounds, this.debug);
             case COMPLEX:
                 blueDetector.process(img);
                 redDetector.process(img);
-                return BeaconAnalyzer.analyze_COMPLEX(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
+                return JewelAnalyzer.analyze_COMPLEX(redDetector.getContours(),
+                  blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
         }
     }
 
@@ -157,7 +161,7 @@ public final class Beacon {
     }
 
     /**
-     * Set color tolerance for red beacon detector
+     * Set color tolerance for red jewel detector
      *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
      *                  tolerance (more colors detect as red), -1 is minimum (fery vew colors detect
@@ -175,7 +179,7 @@ public final class Beacon {
     }
 
     /**
-     * Set color tolerance for blue beacon detector
+     * Set color tolerance for blue jewel detector
      *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
      *                  tolerance (more colors detect as blue), -1 is minimum (fery vew colors detect
@@ -223,13 +227,13 @@ public final class Beacon {
         REALTIME,
         /**
          * Faster method - selects the two largest contours and analyzes them
-         * FAST is great when near the beacon, but is not suitable for long-distance analysis
+         * FAST is great when near the jewel, but is not suitable for long-distance analysis
          */
         FAST,
         /**
          * Slower and complex method - picks contours based on statistical analysis
          * COMPLEX is highly complex and a work in progress, but is better at selecting
-         * the correct beacon at long distances, but requires that the entire beacon be in view.
+         * the correct jewel at long distances, but requires that the entire jewel be in view.
          */
         COMPLEX;
 
@@ -248,9 +252,9 @@ public final class Beacon {
     }
 
     /**
-     * Beacon color struct
+     * Jewel color struct
      */
-    public enum BeaconColor {
+    public enum JewelColor {
         RED,
         BLUE,
         RED_BRIGHT,
@@ -276,12 +280,12 @@ public final class Beacon {
     }
 
     /**
-     * Beacon analysis struct
+     * Jewel analysis struct
      */
-    public static class BeaconAnalysis {
+    public static class JewelAnalysis {
         private final double confidence;
-        private final BeaconColor left;
-        private final BeaconColor right;
+        private final JewelColor left;
+        private final JewelColor right;
         private final Rectangle location;
         private final Ellipse leftButton;
         private final Ellipse rightButton;
@@ -293,16 +297,16 @@ public final class Beacon {
         /**
          * Instantiate a blank analysis
          */
-        public BeaconAnalysis() {
-            this.left = BeaconColor.UNKNOWN;
-            this.right = BeaconColor.UNKNOWN;
+        public JewelAnalysis() {
+            this.left = JewelColor.UNKNOWN;
+            this.right = JewelColor.UNKNOWN;
             this.confidence = 0.0f;
             this.location = new Rectangle();
             this.leftButton = null;
             this.rightButton = null;
         }
 
-        BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence) {
+        JewelAnalysis(JewelColor left, JewelColor right, Rectangle location, double confidence) {
             this.left = left;
             this.right = right;
             this.confidence = confidence;
@@ -311,7 +315,7 @@ public final class Beacon {
             this.rightButton = null;
         }
 
-        BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence,
+        JewelAnalysis(JewelColor left, JewelColor right, Rectangle location, double confidence,
                        Ellipse leftButton, Ellipse rightButton) {
             this.left = left;
             this.right = right;
@@ -345,7 +349,7 @@ public final class Beacon {
         }
 
         /**
-         * Get the bounding box surrounding the beacon
+         * Get the bounding box surrounding the jewel
          *
          * @return Rectangle
          */
@@ -354,7 +358,7 @@ public final class Beacon {
         }
 
         /**
-         * Get the top left corner of the beacon
+         * Get the top left corner of the jewel
          *
          * @return Point
          */
@@ -363,7 +367,7 @@ public final class Beacon {
         }
 
         /**
-         * Get the bottomr ight corner of the beacon
+         * Get the bottomr ight corner of the jewel
          *
          * @return Point
          */
@@ -372,7 +376,7 @@ public final class Beacon {
         }
 
         /**
-         * Get the center of the beacon
+         * Get the center of the jewel
          *
          * @return Point
          */
@@ -381,43 +385,43 @@ public final class Beacon {
         }
 
         /**
-         * Get the width of the beacon
+         * Get the width of the jewel
          *
-         * @return Width of the beacon
+         * @return Width of the jewel
          */
         public double getWidth() {
             return location.width();
         }
 
         /**
-         * Get the height of the beacon
+         * Get the height of the jewel
          *
-         * @return Height of the beacon
+         * @return Height of the jewel
          */
         public double getHeight() {
             return location.height();
         }
 
         /**
-         * Get the color of the left side of the beacon
+         * Get the color of the left side of the jewel
          *
-         * @return Beacon color state
+         * @return Jewel color state
          */
-        public BeaconColor getStateLeft() {
+        public JewelColor getStateLeft() {
             return left;
         }
 
         /**
-         * Get the color of the right side of the beacon
+         * Get the color of the right side of the jewel
          *
-         * @return Beacon color state
+         * @return Jewel color state
          */
-        public BeaconColor getStateRight() {
+        public JewelColor getStateRight() {
             return right;
         }
 
         /**
-         * Get a confidence value that the beacon analysis is correct
+         * Get a confidence value that the jewel analysis is correct
          * <p/>
          * This is an approximation, but can be used carefully to filter out random noise.
          * <p/>
@@ -430,7 +434,7 @@ public final class Beacon {
         }
 
         /**
-         * Get a confidence string that the beacon analysis is correct
+         * Get a confidence string that the jewel analysis is correct
          * <p/>
          * This is an approximation, but can be used carefully to filter out random noise.
          * <p/>
@@ -449,7 +453,7 @@ public final class Beacon {
          * @return True if the left side is NOT UNKNOWN
          */
         public boolean isLeftKnown() {
-            return left != BeaconColor.UNKNOWN;
+            return left != JewelColor.UNKNOWN;
         }
 
         /**
@@ -458,7 +462,7 @@ public final class Beacon {
          * @return True if the left side is BLUE or BLUE_BRIGHT
          */
         public boolean isLeftBlue() {
-            return (left == BeaconColor.BLUE_BRIGHT || left == BeaconColor.BLUE);
+            return (left == JewelColor.BLUE_BRIGHT || left == JewelColor.BLUE);
         }
 
         /**
@@ -467,7 +471,7 @@ public final class Beacon {
          * @return True if the left side is RED or RED_BRIGHT
          */
         public boolean isLeftRed() {
-            return (left == BeaconColor.RED_BRIGHT || left == BeaconColor.RED);
+            return (left == JewelColor.RED_BRIGHT || left == JewelColor.RED);
         }
 
         /**
@@ -476,7 +480,7 @@ public final class Beacon {
          * @return True if the right side is NOT UNKNOWN
          */
         public boolean isRightKnown() {
-            return right != BeaconColor.UNKNOWN;
+            return right != JewelColor.UNKNOWN;
         }
 
         /**
@@ -485,7 +489,7 @@ public final class Beacon {
          * @return True if the right side is BLUE or BLUE_BRIGHT
          */
         public boolean isRightBlue() {
-            return (right == BeaconColor.BLUE_BRIGHT || right == BeaconColor.BLUE);
+            return (right == JewelColor.BLUE_BRIGHT || right == JewelColor.BLUE);
         }
 
         /**
@@ -494,32 +498,32 @@ public final class Beacon {
          * @return True if the right side is RED or RED_BRIGHT
          */
         public boolean isRightRed() {
-            return (right == BeaconColor.RED_BRIGHT || right == BeaconColor.RED);
+            return (right == JewelColor.RED_BRIGHT || right == JewelColor.RED);
         }
 
         /**
-         * Test whether the beacon is found
+         * Test whether the jewel is found
          *
          * @return isLeftKnown() && isRightKnown()
          */
-        public boolean isBeaconFound() {
+        public boolean isJewelFound() {
             return isLeftKnown() && isRightKnown();
         }
 
         /**
-         * Test whether the beacon is fully lit
+         * Test whether the jewel is fully lit
          * <p/>
          * Note that in this revision, brightness is not supported
          *
          * @return True if both sides have a bright component
          */
-        public boolean isBeaconFullyLit() {
-            return (left == BeaconColor.BLUE_BRIGHT || left == BeaconColor.RED_BRIGHT) &&
-                    (right == BeaconColor.BLUE_BRIGHT || right == BeaconColor.RED_BRIGHT);
+        public boolean isJewelFullyLit() {
+            return (left == JewelColor.BLUE_BRIGHT || left == JewelColor.RED_BRIGHT) &&
+                    (right == JewelColor.BLUE_BRIGHT || right == JewelColor.RED_BRIGHT);
         }
 
         /**
-         * Get a string representing the colors of the beacon
+         * Get a string representing the colors of the jewel
          *
          * @return left, right
          */
@@ -528,9 +532,9 @@ public final class Beacon {
         }
 
         /**
-         * Get the location of the beacon as a string
+         * Get the location of the jewel as a string
          *
-         * @return Center of the beacon
+         * @return Center of the jewel
          */
         public String getLocationString() {
             return getCenter().toString();
