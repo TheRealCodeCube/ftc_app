@@ -107,14 +107,6 @@ public class LinearVisionSampleThin extends LinearVisionOpMode {
     beacon.setColorToleranceRed(0);
     beacon.setColorToleranceBlue(0);
 
-    /**
-     * Set analysis boundary.
-     * Use this for faster analysis at the cost of not using the entire frame.
-     * This will not work on some methods, such as COMPLEX
-     **/
-    //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2)
-    // , width - 200, 200));
-
     //Wait for the match to begin
     waitForStart();
 
