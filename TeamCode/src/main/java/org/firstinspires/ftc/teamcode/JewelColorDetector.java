@@ -61,6 +61,11 @@ import org.opencv.core.Size;
  * 10/9/17 v 0.11 jmr. Renamed to "Linear Vision Sample (Thin)", and works
  * with ROTATION and CAMERA_CONTROL disabled. Succeeding minor versions 0.1x
  * will try to thin down the code more.
+ * 10/16/17 v. 0.2, converted to use identifiers jewel, Jewel and derivatives.
+ *   It was copied from LinearVisionSampleThin.java.
+ *   This version uses the same logic as the Beacon version. Succeeding minor
+ *   versions 0.2x will attempt to improve color detection, and the overall
+ *   performance of this opmode.
  *
  */
 @TeleOp(name = "Jewel Color Detector", group = "OpenCV")
@@ -90,7 +95,7 @@ public class JewelColorDetector extends LinearVisionOpMode {
      * Enable extensions. Use what you need.
      */
     enableExtension(Extensions.JEWEL);         //Jewel detection
-    //Extensions ROTATION and CAMERA_CONTROL not enabled. Here, we want
+    //Extensions BEACON, ROTATION and CAMERA_CONTROL not enabled. Here, we want
     // a JEWEL extension.
 
     /**
@@ -102,8 +107,8 @@ public class JewelColorDetector extends LinearVisionOpMode {
     jewel.setAnalysisMethod(Jewel.AnalysisMethod.FAST);
 
     /**
-     * Set color tolerances
-     * 0 is default, -1 is minimum and 1 is maximum tolerance
+     * Set color tolerances to medium restriction.
+     * 0 is default, -1 is minimum and 1 is maximum tolerance.
      */
     jewel.setColorToleranceRed(0);
     jewel.setColorToleranceBlue(0);

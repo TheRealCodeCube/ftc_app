@@ -9,7 +9,7 @@ package org.lasarobotics.vision.ftc.resq;
 
 import android.util.Log;
 
-import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.ColorBlobRGBADetector;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Detectable;
@@ -146,7 +146,7 @@ class JewelAnalyzer {
             return new Jewel.JewelAnalysis(Jewel.JewelColor.BLUE, Jewel.JewelColor.RED, centerRect, confidence);
     }
 
-    static Jewel.JewelAnalysis analyze_FAST(ColorBlobDetector detectorRed, ColorBlobDetector detectorBlue,
+    static Jewel.JewelAnalysis analyze_FAST(ColorBlobRGBADetector detectorRed, ColorBlobRGBADetector detectorBlue,
                                               Mat img, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
         //Figure out which way to read the image
         double orientationAngle = orientation.getAngle();

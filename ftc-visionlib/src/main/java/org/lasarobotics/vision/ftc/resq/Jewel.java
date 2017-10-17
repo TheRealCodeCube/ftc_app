@@ -6,7 +6,7 @@
  */
 package org.lasarobotics.vision.ftc.resq;
 
-import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.ColorBlobRGBADetector;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.util.MathUtil;
@@ -26,8 +26,10 @@ public final class Jewel {
 
     private AnalysisMethod method;
     private Rectangle bounds;
-    private ColorBlobDetector blueDetector = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
-    private ColorBlobDetector redDetector = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+    private ColorBlobRGBADetector blueDetector = new ColorBlobRGBADetector
+      (Constants
+      .COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
+    private ColorBlobRGBADetector redDetector = new ColorBlobRGBADetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
     private boolean debug = false;
 
     /**
@@ -99,8 +101,8 @@ public final class Jewel {
      * @param orientation  Screen orientation compensation, given by the android.Sensors class
      * @return Jewel analysis class
      */
-    public JewelAnalysis analyzeFrame(ColorBlobDetector redDetector,
-                                  ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
+    public JewelAnalysis analyzeFrame(ColorBlobRGBADetector redDetector,
+                                  ColorBlobRGBADetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
         if (this.bounds == null)
             this.bounds = new Rectangle(img.size());
         switch (method) {
@@ -169,13 +171,13 @@ public final class Jewel {
      */
     public void setColorToleranceRed(double tolerance) {
         //Reset the detector first
-        redDetector = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+        redDetector = new ColorBlobRGBADetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
         double[] center = redDetector.getColorCenter().getScalar().val;
         double[] radius = redDetector.getColorRadius().val;
         radius = getColorWithTolerance(radius, tolerance);
         Scalar lower = new Scalar(center[0] - radius[0], center[1] - radius[1], center[2] - radius[2]);
         Scalar upper = new Scalar(center[0] + radius[0], center[1] + radius[1], center[2] + radius[2]);
-        redDetector = new ColorBlobDetector(new ColorHSV(lower), new ColorHSV(upper));
+        redDetector = new ColorBlobRGBADetector(new ColorHSV(lower), new ColorHSV(upper));
     }
 
     /**
@@ -187,13 +189,13 @@ public final class Jewel {
      */
     public void setColorToleranceBlue(double tolerance) {
         //Reset the detector first
-        blueDetector = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
+        blueDetector = new ColorBlobRGBADetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
         double[] center = blueDetector.getColorCenter().getScalar().val;
         double[] radius = blueDetector.getColorRadius().val;
         radius = getColorWithTolerance(radius, tolerance);
         Scalar lower = new Scalar(center[0] - radius[0], center[1] - radius[1], center[2] - radius[2]);
         Scalar upper = new Scalar(center[0] + radius[0], center[1] + radius[1], center[2] + radius[2]);
-        blueDetector = new ColorBlobDetector(new ColorHSV(lower), new ColorHSV(upper));
+        blueDetector = new ColorBlobRGBADetector(new ColorHSV(lower), new ColorHSV(upper));
     }
 
     /**

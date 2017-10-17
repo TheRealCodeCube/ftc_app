@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Implements blob (regional) detection based on color
  */
-public class ColorBlobDetector {
+public class ColorBlobRGBADetector {
 
     private final List<Contour> contours = new ArrayList<>();
     // Cache
@@ -52,7 +52,7 @@ public class ColorBlobDetector {
      *
      * @param color Color to search for
      */
-    public ColorBlobDetector(Color color) {
+    public ColorBlobRGBADetector(Color color) {
         setColor(color);
     }
 
@@ -62,7 +62,7 @@ public class ColorBlobDetector {
      * @param color       Color to search for
      * @param colorRadius Color radius
      */
-    public ColorBlobDetector(Color color, Color colorRadius) {
+    public ColorBlobRGBADetector(Color color, Color colorRadius) {
         this.colorRadius = colorRadius.convertColorScalar(ColorSpace.HSV);
         setColor(color);
     }
@@ -73,7 +73,7 @@ public class ColorBlobDetector {
      * @param colorMinimum Minimum bound in HSV
      * @param colorMaximum Maximum bound in HSV
      */
-    public ColorBlobDetector(ColorHSV colorMinimum, ColorHSV colorMaximum) {
+    public ColorBlobRGBADetector(ColorHSV colorMinimum, ColorHSV colorMaximum) {
         setColorRadius(colorMinimum, colorMaximum);
     }
 
