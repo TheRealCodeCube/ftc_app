@@ -62,9 +62,9 @@ import org.opencv.core.Size;
  * will try to thin down the code more.
  *
  */
-@TeleOp(name = "Linear Vision Sample (Thin)", group = "OpenCV")
+@TeleOp(name = "Beacon Color Detect", group = "OpenCV")
 //@Disabled
-public class LinearVisionSampleThin extends LinearVisionOpMode {
+public class BeaconColorDetect extends LinearVisionOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException {

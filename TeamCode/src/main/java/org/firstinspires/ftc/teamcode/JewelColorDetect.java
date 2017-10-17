@@ -62,15 +62,15 @@ import org.opencv.core.Size;
  * with ROTATION and CAMERA_CONTROL disabled. Succeeding minor versions 0.1x
  * will try to thin down the code more.
  * 10/16/17 v. 0.2, converted to use identifiers jewel, Jewel and derivatives.
- *   It was copied from LinearVisionSampleThin.java.
+ *   It was copied from BeaconColorDetect.java.
  *   This version uses the same logic as the Beacon version. Succeeding minor
  *   versions 0.2x will attempt to improve color detection, and the overall
  *   performance of this opmode.
  *
  */
-@TeleOp(name = "Jewel Color Detector", group = "OpenCV")
+@TeleOp(name = "Jewel Color Detect", group = "OpenCV")
 //@Disabled
-public class JewelColorDetector extends LinearVisionOpMode {
+public class JewelColorDetect extends LinearVisionOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException {
