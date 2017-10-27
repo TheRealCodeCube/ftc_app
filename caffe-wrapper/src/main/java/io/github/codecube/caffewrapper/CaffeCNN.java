@@ -1,4 +1,4 @@
-package io.github.codecube.cnntest;
+package io.github.codecube.caffewrapper;
 
 import android.os.Environment;
 

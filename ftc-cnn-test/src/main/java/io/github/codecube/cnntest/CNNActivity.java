@@ -27,8 +27,11 @@ public class CNNActivity extends VisionEnabledActivity {
 
         File caffeFiles = new File(Environment.getExternalStorageDirectory().toString() +
                 "/caffe_files");
-        for(File f : caffeFiles.listFiles()) {
-            if(f.getName().contains("caffemodel")) {
+        if(!caffeFiles.exists()) {
+            caffeFiles.mkdir();
+        }
+        for (File f : caffeFiles.listFiles()) {
+            if (f.getName().contains("caffemodel")) {
                 mAvailableModels.add(f.getName());
             }
         }

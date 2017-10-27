@@ -20,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 
+import io.github.codecube.caffewrapper.CaffeCNN;
+
 /**
  * Created by josh on 10/9/17.
  */
