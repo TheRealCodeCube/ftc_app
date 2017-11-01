@@ -42,6 +42,8 @@ public class RunnerBotOpMode extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    private long nudgeStart = 0; //Records the time a user first pressed a button to start a nudge.
+    private static final long NUDGE_TIME = 200; //How many milliseconds a nudge should be run for.
 
     @Override
     public void runOpMode() {
@@ -77,13 +79,56 @@ public class RunnerBotOpMode extends LinearOpMode {
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = -gamepad1.left_stick_y;
             double turn  =  gamepad1.right_stick_x;
+            //Squaring inputs allows for more precise control over small movements while still
+            //retaining the maximum possible speed.
+            /*  Through testing, I found this only works well on large joysticks (the kind FRC uses)
+            if(drive > 0)
+                drive = drive * drive;
+            else
+                drive = -drive * drive;
+            if(turn > 0)
+                turn = turn * turn;
+            else
+                turn = -turn * turn;
+            */
+
+            //The driver can press a dpad button to nudge the robot in a particular direction.
+            boolean nudgePressed = gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left ||
+                    gamepad1.dpad_right;
+            if(nudgePressed) {
+                drive = 0.0;
+                turn = 0.0;
+                //nudgeTimer is used to perform a nudge for a specified number of frames, even if
+                //the user continues to hold the nudge button.
+                if(nudgeStart == 0) {
+                    nudgeStart = System.currentTimeMillis();
+                }
+                if(nudgeStart + NUDGE_TIME > System.currentTimeMillis()) {
+                    if(gamepad1.dpad_up) {
+                        drive = 0.5;
+                    } else if(gamepad1.dpad_down) {
+                        drive = -0.5;
+                    } else if(gamepad1.dpad_left) {
+                        turn = -0.5;
+                    } else if(gamepad1.dpad_right) {
+                        turn = 0.5;
+                    }
+                }
+            } else {
+                nudgeStart = 0;
+            }
+
+            //Reduce drive speed if left trigger or bumper are pressed.
+            if(gamepad1.left_bumper || (gamepad1.left_trigger > 0.5)) {
+                drive *= 0.5;
+            }
+            //Reduce turn speed if right trigger or bumper are pressed.
+            if(gamepad1.right_bumper || (gamepad1.right_trigger > 0.5)) {
+                turn *= 0.5;
+            }
+
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
             leftDrive.setPower(leftPower);
