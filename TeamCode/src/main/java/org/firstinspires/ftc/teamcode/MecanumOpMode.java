@@ -41,20 +41,17 @@ public class MecanumOpMode extends LinearOpMode {
         elapsedTime.reset();
 
         while(opModeIsActive()) {
-            double x = gamepad1.right_stick_x, y = gamepad1.right_stick_y;
-            //Squaring input values makes fine movements easier, while the max speed stays the same.
-            x = x * x;
-            y = y * y;
+            double x = gamepad1.right_stick_x, y = -gamepad1.left_stick_y;
             double magnitude = Math.sqrt(x * x + y * y); //a^2+b^2=c^2
-            double angle = 0.0;
+            double angle = Math.PI / 2;
             if(x != 0.0) { //To prevent DIV0 errors.
                 angle = Math.atan(y / x); //tan(theta) = opposite (y) / adjacent (x)
-                if(y < 0.0) {
-                    angle += 180.0; //Because 1 / 1 and -1 / -1 give the same angle.
-                }
             }
-            angle -= 45.0; //Refer to diagram at top of source. The wheels' coordinate system is
-                           //45 degrees off from the robot's, making this correction necessary.
+            if(y < 0.0) {
+                angle += Math.PI; //Because 1 / 1 and -1 / -1 give the same angle.
+            }
+            angle -= Math.PI / 4; //Refer to diagram at top of source. The wheels' coordinate system
+                             //is 45 degrees off from the robot's, making this correction necessary.
             double wheelX = Math.cos(angle), wheelY = Math.sin(angle);
             //'Normalization'. This gives a competitive advantage. For example, when going at 45
             //degrees, plugging that into sin and cos gives sqrt(2) for both axes. But the robot
