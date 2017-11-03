@@ -20,8 +20,8 @@ import com.qualcomm.robotcore.util.Range;
  *-x     -y
  */
 
-@TeleOp(name="Mecanum Wheel Teleop", group="Linear Opmode")
-public class MecanumOpMode extends LinearOpMode {
+@TeleOp(name="Slider Bot", group="Linear Opmode")
+public class SliderBotOpMode extends LinearOpMode {
     private ElapsedTime elapsedTime = new ElapsedTime();
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 

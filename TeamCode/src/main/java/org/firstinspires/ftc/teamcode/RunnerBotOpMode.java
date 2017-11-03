@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Runnerbot Teleop", group="Linear Opmode")
+@TeleOp(name="Runner Bot", group="Linear Opmode")
 public class RunnerBotOpMode extends LinearOpMode {
 
     // Declare OpMode members.

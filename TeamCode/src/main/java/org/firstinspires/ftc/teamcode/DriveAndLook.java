@@ -37,8 +37,9 @@ Copyright (c) 2017, Don Bosco Technical Institute FTC Robotics Team 5197
   USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-  import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -98,7 +99,7 @@ import java.util.List;
  */
 
 @TeleOp(name = "Drive and Look", group = "Rangerbot")
-//@Disabled
+@Disabled
 public class DriveAndLook extends LinearOpMode {
   public RRField field = new RRField(this);
   public Rangerbot robot = new Rangerbot(this);

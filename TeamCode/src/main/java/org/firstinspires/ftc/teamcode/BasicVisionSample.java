@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.VisionOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Size;
@@ -46,6 +47,7 @@ import org.opencv.core.Size;
  * OpMode even extend the VisionOpMode class! Be sure to extend it if writing
  * your own OpMode structure.
  */
+@Disabled
 public class BasicVisionSample extends VisionOpMode {
 
   @Override

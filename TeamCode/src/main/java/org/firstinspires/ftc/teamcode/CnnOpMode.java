@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.opmode.VisionOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
@@ -10,7 +11,7 @@ import io.github.codecube.caffewrapper.CaffeCNN;
 /**
  * Created by josh on 10/27/17.
  */
-
+@Disabled
 public class CnnOpMode extends VisionOpMode {
     private CaffeCNN mCnn;
 

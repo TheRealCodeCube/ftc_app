@@ -35,6 +35,7 @@ Copyright (c) 2017 Don Bosco Technical Institute Robotics, FTC Team 5197
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -48,7 +49,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  */
 
 @Autonomous(name = "Tablebot: Auto Drive", group = "Tablebot")
-//@Disabled
+@Disabled
 public class TablebotAutoDrive_Linear extends LinearOpMode {
 
   /* Declare OpMode members. */

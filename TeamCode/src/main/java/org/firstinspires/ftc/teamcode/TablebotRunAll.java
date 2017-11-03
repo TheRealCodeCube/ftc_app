@@ -36,6 +36,7 @@ Copyright (c) 2017 Don Bosco Technical Institute Robotics, FTC Team 5197
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -49,7 +50,7 @@ import java.util.Locale;
  */
 
 @TeleOp(name = "Tablebot All Systems", group = "Tablebot")
-//@Disabled
+@Disabled
 public class TablebotRunAll extends LinearOpMode {
   public RRField field = new RRField(this);
   Tablebot robot = new Tablebot(this);
