@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -48,6 +49,36 @@ public class CNNActivity extends VisionEnabledActivity {
     public void onPause() {
         super.onPause();
         mOpMode.stop();
+    }
+
+    private void offsetSelectedNetwork(int delta) {
+        int selected = ((Spinner) findViewById(R.id.model_selector)).getSelectedItemPosition();
+        selected += delta;
+        if(selected < 0) selected = 0;
+        if(selected >= mAvailableModels.size()) selected = mAvailableModels.size() - 1;
+        ((Spinner) findViewById(R.id.model_selector)).setSelection(selected);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        //This is for using the app over a remote connection (either VNC or a wireless keyboard.)
+        if((keyCode >= KeyEvent.KEYCODE_0) && (keyCode <= KeyEvent.KEYCODE_9)) {
+            //Triggers if the user pressed a number. Selects a label.
+            int number = keyCode - KeyEvent.KEYCODE_0;
+            ((Spinner) findViewById(R.id.label)).setSelection(number);
+        } else if(keyCode == KeyEvent.KEYCODE_SPACE) {
+            //Starts capturing images.
+            captureImages(null);
+        } else if(keyCode == KeyEvent.KEYCODE_LEFT_BRACKET) {
+            offsetSelectedNetwork(-1);
+        } else if(keyCode == KeyEvent.KEYCODE_RIGHT_BRACKET) {
+            offsetSelectedNetwork(1);
+        } else if(keyCode == KeyEvent.KEYCODE_C) {
+            toggleClassification(null);
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public void toggleClassification(View view) {
