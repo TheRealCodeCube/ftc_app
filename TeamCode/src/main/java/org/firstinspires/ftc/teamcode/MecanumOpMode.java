@@ -42,6 +42,7 @@ public class MecanumOpMode extends LinearOpMode {
 
         while(opModeIsActive()) {
             double x = gamepad1.right_stick_x, y = -gamepad1.left_stick_y;
+            double turn = gamepad1.right_trigger - gamepad1.left_trigger;
             double magnitude = Math.sqrt(x * x + y * y); //a^2+b^2=c^2
             double angle = Math.PI / 2;
             if(x != 0.0) { //To prevent DIV0 errors.
@@ -65,10 +66,10 @@ public class MecanumOpMode extends LinearOpMode {
             wheelX *= magnitude;
             wheelY *= magnitude;
             //Refer to diagram for explanation of this.
-            frontRight.setPower(wheelX);
-            backLeft.setPower(wheelX);
-            frontLeft.setPower(wheelY);
-            backRight.setPower(wheelY);
+            frontRight.setPower(wheelX - turn);
+            backLeft.setPower(wheelX + turn);
+            frontLeft.setPower(wheelY + turn);
+            backRight.setPower(wheelY - turn);
 
             telemetry.addData("Status", "Running (" + elapsedTime.toString() + ")");
             telemetry.addData("Wheel X", "%.2f", wheelX);
