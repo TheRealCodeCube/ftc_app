@@ -48,7 +48,7 @@ public class SliderBotOpMode extends LinearOpMode {
             if(x != 0.0) { //To prevent DIV0 errors.
                 angle = Math.atan(y / x); //tan(theta) = opposite (y) / adjacent (x)
             }
-            if(y < 0.0) {
+            if((y < 0.0) || (y == 0.0 && x < 0.0)) {
                 angle += Math.PI; //Because 1 / 1 and -1 / -1 give the same angle.
             }
             angle -= Math.PI / 4; //Refer to diagram at top of source. The wheels' coordinate system
