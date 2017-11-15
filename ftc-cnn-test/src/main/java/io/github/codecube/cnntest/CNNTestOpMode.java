@@ -54,7 +54,12 @@ public class CNNTestOpMode extends TestableVisionOpMode {
      */
     public void loadModel(String newModelName) {
         if(mCurrentModelName != newModelName) {
-            mCaffeCnn.loadModel(newModelName);
+            try {
+                mCaffeCnn.loadModel(newModelName);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
             mCurrentModelName = newModelName;
         }
     }

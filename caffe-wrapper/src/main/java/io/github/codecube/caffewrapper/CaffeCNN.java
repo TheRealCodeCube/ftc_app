@@ -7,8 +7,7 @@ import com.sh1r0.caffe_android_lib.CaffeMobile;
 import org.opencv.core.Mat;
 
 import java.io.File;
-
-import static android.R.attr.name;
+import java.io.FileNotFoundException;
 
 /**
  * Created by josh on 10/13/17.
@@ -51,7 +50,7 @@ public class CaffeCNN {
      * be set to its default value of 256.
      * @param modelName The name of the model.
      */
-    public CaffeCNN(String modelName) {
+    public CaffeCNN(String modelName) throws FileNotFoundException {
         mInstance = new CaffeMobile();
         mInstance.setNumThreads(1);
         loadModel(modelName);
@@ -63,7 +62,7 @@ public class CaffeCNN {
      * @param modelName The name of the model to load.
      * @param inputSize The width and height of images that will be inputted.
      */
-    public CaffeCNN(String modelName, int inputSize) {
+    public CaffeCNN(String modelName, int inputSize) throws FileNotFoundException {
         mInstance = new CaffeMobile();
         mInstance.setNumThreads(1);
         mInputSize = inputSize;
@@ -77,11 +76,16 @@ public class CaffeCNN {
      * the phone if you use the 'Upload To Android Device` feature in model_manager.py.
      * @param modelName The name of the model, used to find the prototext and caffemodel files.
      */
-    public void loadModel(String modelName) {
+    public void loadModel(String modelName) throws FileNotFoundException {
         mName = modelName;
-        String path = MODELS_FOLDER + "/" + name;
-        //Load the model using the native library.
-        mInstance.loadModel(path + ".prototext", path + ".caffemodel");
+        String path = MODELS_FOLDER + "/" + modelName;
+        System.out.println(path);
+        if((new File(path + ".caffemodel")).exists()) {
+            //Load the model using the native library.
+            System.err.println(mInstance.loadModel(path + ".prototext", path + ".caffemodel"));
+        } else {
+            throw new FileNotFoundException();
+        }
     }
 
     /**
@@ -115,6 +119,7 @@ public class CaffeCNN {
                 }
             }
         }
+
         //Execute the network using the native library.
         return mInstance.getConfidenceScore(transposed, mInputSize, mInputSize);
     }

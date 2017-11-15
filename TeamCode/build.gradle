@@ -15,6 +15,5 @@
 apply from: '../build.common.gradle'
 
 dependencies {
-
-compile project(path: ':caffe-wrapper')
+    compile project(path: ':caffe-wrapper')
 }
