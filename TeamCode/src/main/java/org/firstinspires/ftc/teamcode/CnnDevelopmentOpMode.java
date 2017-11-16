@@ -57,7 +57,8 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
         double[] input = control.getSpeedAndTurn(false);
         bot.drive(input[0], input[1]);
         int pressed = -1; //TODO: Replace this with an enum or a more logical system.
-        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.dpad_down) {
+        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.dpad_down ||
+                gamepad1.a || gamepad1.b) {
             if(!mPressed) {
                 mPressed = true;
                 if(gamepad1.dpad_left || gamepad1.dpad_right) {
@@ -71,6 +72,10 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
                     pressed = 0;
                 } else if(gamepad1.dpad_down) {
                     pressed = 1;
+                } else if(gamepad1.a) {
+                    pressed = 2;
+                } else if(gamepad1.b) {
+                    pressed = 3;
                 }
             }
         } else {
@@ -83,11 +88,9 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
             } else if(pressed == 1) {
                 //Equivalent to -1, but modulo does not like negative numbers.
                 mTrainingLabel = (mTrainingLabel + 9) % 10;
-            }
-            if(gamepad1.a) {
+            } else if(pressed == 2) {
                 mPicturesToCapture += 100;
-            }
-            if(gamepad1.b) {
+            } else if(pressed == 3) {
                 mPicturesToCapture = 0;
             }
             telemetry.addData("Mode", "Capture Training Data");
@@ -95,15 +98,16 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
                     "Waiting");
             telemetry.addData("Selected label", mTrainingLabel);
             telemetry.addData("Pictures Left To Capture", mPicturesToCapture);
-            for (String name : CNNDevUtils.getAvailableNetworks()) {
-                telemetry.addData("Available network", name);
-            }
         } else {
             if(pressed == 0) {
                 mSelectedNetwork = (mSelectedNetwork + 1) % mAvailableNetworks.size();
             } else if (pressed == 1) {
                 mSelectedNetwork = (mSelectedNetwork + mAvailableNetworks.size() - 1) %
                         mAvailableNetworks.size();
+            } else if(pressed == 2) {
+                mClassify = true;
+            } else if(pressed == 3) {
+                mClassify = false;
             }
             if(pressed != -1) { //If the user pressed anything to change the selected network.
                 try {
@@ -111,11 +115,6 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-            }
-            if(gamepad1.a) {
-                mClassify = true;
-            } else if(gamepad1.b) {
-                mClassify = false;
             }
             telemetry.addData("Mode", "Test Trained Network");
             telemetry.addData("Status", (mClassify) ? "Testing network" : "Waiting");
@@ -126,20 +125,7 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
                 }
             }
         }
+        telemetry.update();
         return rgba;
     }
-
-    /*
-    @Override
-    public void start() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        bot.loadHardware(hardwareMap);
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
-        control.setGamepad(gamepad1);
-    }*/
 }
