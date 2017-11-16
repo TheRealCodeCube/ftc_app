@@ -15,7 +15,7 @@ public class TankDriveControl {
         this.gamepad = gamepad;
     }
     
-    public double[] getSpeedAndTurn() {
+    public double[] getSpeedAndTurn(boolean useFineTuningControls) {
         double speed = -gamepad.left_stick_y;
         double turn  =  gamepad.right_stick_x;
 
@@ -55,5 +55,9 @@ public class TankDriveControl {
         }
         double[] tr = { speed, turn };
         return tr;
+    }
+
+    public double[] getSpeedAndTurn() {
+        return getSpeedAndTurn(true);
     }
 }

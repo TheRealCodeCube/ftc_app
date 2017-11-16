@@ -16,8 +16,8 @@ import java.io.FileNotFoundException;
 public class CaffeCNN {
     private static final File sdcard = Environment.getExternalStorageDirectory();
     private static final String MODELS_FOLDER = sdcard.getAbsolutePath() + "/caffe_files";
-    private String mName = "";
-    private CaffeMobile mInstance;
+    private String mName = null;
+    private CaffeMobile mInstance = null;
     private int mInputSize = 256;
 
     //This is here to load the native caffe libraries.
@@ -77,15 +77,23 @@ public class CaffeCNN {
      * @param modelName The name of the model, used to find the prototext and caffemodel files.
      */
     public void loadModel(String modelName) throws FileNotFoundException {
-        mName = modelName;
         String path = MODELS_FOLDER + "/" + modelName;
-        System.out.println(path);
         if((new File(path + ".caffemodel")).exists()) {
             //Load the model using the native library.
-            System.err.println(mInstance.loadModel(path + ".prototext", path + ".caffemodel"));
+            if(mInstance.loadModel(path + ".prototext", path + ".caffemodel") == 0) {
+                mName = modelName;
+            }
         } else {
             throw new FileNotFoundException();
         }
+    }
+
+    /**
+     * Gets the name of the model that was last successfully loaded.
+     * @return The name of the loaded network, null if no network has been successfully loaded.
+     */
+    public String getLoadedModelName() {
+        return mName;
     }
 
     /**
