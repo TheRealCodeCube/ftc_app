@@ -33,7 +33,7 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
     private int mPicturesToCapture = 0; //How many more training images to capture.
     private int mTrainingLabel = 0; //The label to apply to captured images.
     private long mLastPictureCaptured = 0; //Timestamp of when the last training image was captured.
-    private long PICTURE_CAPTURE_INTERVAL = 500; //How many milliseconds in between capturing each
+    private long PICTURE_CAPTURE_INTERVAL = 200; //How many milliseconds in between capturing each
                                                  //training image.
 
     @Override
@@ -92,6 +92,12 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
                 mPicturesToCapture += 100;
             } else if(pressed == 3) {
                 mPicturesToCapture = 0;
+            }
+            if((mPicturesToCapture > 0) && (mLastPictureCaptured + PICTURE_CAPTURE_INTERVAL <
+                    System.currentTimeMillis())) {
+                mLastPictureCaptured = System.currentTimeMillis();
+                CNNDevUtils.saveTrainingImage(rgba, mTrainingLabel);
+                mPicturesToCapture--;
             }
             telemetry.addData("Mode", "Capture Training Data");
             telemetry.addData("Status", (mPicturesToCapture > 0) ? "Capturing training data" :
