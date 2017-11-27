@@ -18,20 +18,22 @@ public class ArmTestOpMode extends LinearOpMode {
         telemetry.update();
 
         //Load the motor.
-        armMotor = hardwareMap.get(DcMotor.class, "frontLeft");
+        armMotor = hardwareMap.get(DcMotor.class, "arm");
 
         //Wait for the match to start.
         waitForStart();
         //elapsedTime.reset();
 
         while(opModeIsActive()) {
+            /*
             if(gamepad1.dpad_up && (armMotor.getCurrentPosition() < 100)) {
-                armMotor.setPower(0.1);
+                armMotor.setPower(0.25);
             } else if(gamepad1.dpad_down && (armMotor.getCurrentPosition() > 0)) {
-                armMotor.setPower(-0.1);
+                armMotor.setPower(-0.25);
             } else {
                 armMotor.setPower(0.0);
-            }
+            }*/
+            armMotor.setPower(gamepad1.left_stick_y);
             telemetry.addData("Status", "RUNNING");
             telemetry.addData("Encoder Position", armMotor.getCurrentPosition());
         }
