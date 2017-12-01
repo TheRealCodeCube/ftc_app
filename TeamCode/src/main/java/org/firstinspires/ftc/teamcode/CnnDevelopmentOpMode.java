@@ -29,6 +29,7 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
     private List<String> mAvailableNetworks; //Cache names of available networks.
     private int mSelectedNetwork = -1; //The index of the network that should be tested.
     private boolean mClassify = false; //True if the network should be executed.
+    private float[] mPrevOutput; //Used to cache the output of the network.
 
     private int mPicturesToCapture = 0; //How many more training images to capture.
     private int mTrainingLabel = 0; //The label to apply to captured images.
@@ -123,12 +124,20 @@ public class CnnDevelopmentOpMode extends ManualVisionOpMode {
                 }
             }
             telemetry.addData("Mode", "Test Trained Network");
+            telemetry.addData("Selected Network", mAvailableNetworks.get(mSelectedNetwork));
+            telemetry.addData("Loaded Network", mCnn.getLoadedModelName());
             telemetry.addData("Status", (mClassify) ? "Testing network" : "Waiting");
-            if (mCnn.getLoadedModelName() != null) {
-                float[] results = mCnn.classify(rgba);
-                for (int i = 0; i < results.length; i++) {
-                    telemetry.addData("Confidence for category " + (i + 1), results[i]);
+            if ((mCnn.getLoadedModelName() != null) && mClassify) {
+                //This painfulness is necessary because, for some reason, if there is a delay before
+                //the output is sent via telemetry, it will not show up on the driver station.
+                if(mPrevOutput != null) {
+                    for (int i = 0; i < mPrevOutput.length; i++) {
+                        System.err.println(i);
+                        telemetry.addData("Confidence For Category " + (i + 1), mPrevOutput[i]);
+                    }
                 }
+                //Cache the output to send later.
+                mPrevOutput = mCnn.classify(rgba);
             }
         }
         telemetry.update();
