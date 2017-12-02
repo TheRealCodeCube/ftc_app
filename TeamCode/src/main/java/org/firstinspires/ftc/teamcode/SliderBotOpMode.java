@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by josh on 10/31/17.
@@ -25,6 +25,10 @@ public class SliderBotOpMode extends LinearOpMode {
     private ElapsedTime elapsedTime = new ElapsedTime();
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
+    private double wrist = 1.0, claw = 0.5;
+    private Servo wristMotor, clawMotor;
+    private DcMotor armMotor1, armMotor2;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized, waiting for match to start.");
@@ -35,6 +39,11 @@ public class SliderBotOpMode extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+        //Stuff for the arm.
+        armMotor1 = hardwareMap.get(DcMotor.class, "arm1");
+        armMotor2 = hardwareMap.get(DcMotor.class, "arm2");
+        wristMotor = hardwareMap.get(Servo.class, "wrist");
+        clawMotor = hardwareMap.get(Servo.class, "claw");
 
         //Wait for the match to start.
         waitForStart();
@@ -70,6 +79,36 @@ public class SliderBotOpMode extends LinearOpMode {
             backLeft.setPower(wheelX + turn);
             frontLeft.setPower(wheelY + turn);
             backRight.setPower(wheelY - turn);
+
+            //Copied from ArmTestOpMode, except gamepad1 was changed to gamepad2.
+            double power = 0.0;
+            double encoder = armMotor1.getCurrentPosition();
+
+            claw -= gamepad2.right_stick_y * 0.01; // Stick Y is backwards.
+            claw = Math.max(Math.min(claw, 1.0), 0.0); // Restrict to 0.0 - 1.0
+            clawMotor.setPosition(claw);
+            wrist -= gamepad2.left_stick_y * 0.002; // Stick Y is backwards.
+            wrist = Math.max(Math.min(wrist, 1.0), 0.6); // Restrict to 0.6 - 1.0
+            wristMotor.setPosition(wrist);
+
+            if(gamepad2.y) {
+                // TODO: Make these parameters into constants.
+                if(encoder < -800) { // Need to apply negative power
+                    // Encoder = -800, output = 0. Encoder = -1200, output = -0.35
+                    power = Math.min(-(encoder + 600.0) / 400.0, 1.0) * -0.35;
+                } else { //Need to apply positive power
+                    // Encoder = -800, output = 0. Encoder = -400, output = 0.35
+                    power = Math.min((encoder + 600.0) / 200.0, 1.0) * 0.35;
+                }
+            } else if (gamepad2.x) {
+                if(encoder < -400.0)
+                    power = -0.35;
+            } else if (gamepad2.b) {
+                if(encoder > -800.0)
+                    power = 0.35;
+            }
+            armMotor1.setPower(-power); // It is backwards compared to the other motor.
+            armMotor2.setPower(power);
 
             telemetry.addData("Status", "Running (" + elapsedTime.toString() + ")");
             telemetry.addData("Wheel X", "%.2f", wheelX);
